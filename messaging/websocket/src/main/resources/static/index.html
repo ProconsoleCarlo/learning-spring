@@ -1,0 +1,85 @@
+<html lang="en">
+<head>
+  <title>Chat WebSocket</title>
+  <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.js"></script>
+  <script type="text/javascript">
+    const client = new StompJs.Client({
+      brokerURL: `ws://${document.location.host}/chat`,
+      connectHeaders: {
+        login: 'user',
+        passcode: 'password',
+      },
+      debug: function (str) {
+        console.log(str);
+      },
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
+
+    const showMessageOutput = (messageOutput) => {
+      const response = document.getElementById('response');
+      const p = document.createElement('p');
+      p.style.wordWrap = 'break-word';
+      p.appendChild(document.createTextNode(messageOutput.from + ': '
+          + messageOutput.text + ' (' + messageOutput.time + ')'));
+      response.appendChild(p);
+    };
+
+    client.onConnect = (frame) => {
+      console.log(`Connected: ${frame}`);
+      client.subscribe('/topic/messages', messageOutput => {
+        showMessageOutput(JSON.parse(messageOutput.body));
+      });
+    };
+
+    const setConnected = (connected) => {
+      document.getElementById('connect').disabled = connected;
+      document.getElementById('disconnect').disabled = !connected;
+      document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
+      document.getElementById('response').innerHTML = '';
+    };
+
+    const disconnect = () => {
+      client.deactivate();
+      setConnected(false);
+      console.log('Disconnected');
+    };
+
+    const connect = () => {
+      client.activate();
+      setConnected(true);
+      console.log('Connected');
+    };
+
+    const sendMessage = () => {
+      const from = document.getElementById('from').value;
+      const text = document.getElementById('text').value;
+      client.publish({ destination: '/app/chat', body: JSON.stringify({ 'from': from, 'text': text }) });
+    };
+  </script>
+</head>
+<body onload="disconnect()">
+<div>
+  <div>
+    <label for="from">Choose a nickname</label>
+    <input type="text" id="from" placeholder="Nickname"/>
+  </div>
+  <br/>
+  <div>
+    <button id="connect" onclick="connect();">Connect</button>
+    <button id="disconnect" disabled="disabled" onclick="disconnect();">
+      Disconnect
+    </button>
+  </div>
+  <br/>
+  <div id="conversationDiv">
+    <label for="text">Message</label>
+    <input type="text" id="text" placeholder="Write a message..."/>
+    <button id="sendMessage" onclick="sendMessage();">Send</button>
+    <p id="response"></p>
+  </div>
+</div>
+
+</body>
+</html>
