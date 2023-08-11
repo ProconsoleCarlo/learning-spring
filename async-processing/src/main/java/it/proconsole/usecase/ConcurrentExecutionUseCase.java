@@ -5,7 +5,6 @@ import it.proconsole.model.AggregatedResult;
 import it.proconsole.repository.FastRepository;
 import it.proconsole.repository.SlowRepository;
 import it.proconsole.repository.SlowestRepository;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;

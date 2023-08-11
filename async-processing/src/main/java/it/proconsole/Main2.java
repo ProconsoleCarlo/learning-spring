@@ -1,25 +1,14 @@
 package it.proconsole;
 
-import it.proconsole.model.AggregatedResult;
-import it.proconsole.repository.FastRepository;
-import it.proconsole.repository.SlowRepository;
-import it.proconsole.repository.SlowestRepository;
-import it.proconsole.usecase.ConcurrentExecutionUseCase;
-import it.proconsole.usecase.SerialExecutionUseCase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StopWatch;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main2 {
-    private static final Logger logger = LoggerFactory.getLogger(Main2.class);
-
     public static void main(String[] args) {
       stream();
 
